@@ -13,7 +13,7 @@
       <span class="text-muted float-right">83%</span>
       <h6 class="m-0 mb-1 text-gray">
         <strong>Primary:</strong>
-        &nbsp;Sing Web App
+        &nbsp;RTFKT Web App
       </h6>
       <b-progress class="progress-sm m-0" variant="success" :value="83" :max="100"/>
       <span class="help-block">verifying stable probability status</span>

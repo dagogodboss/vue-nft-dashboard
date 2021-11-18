@@ -21,7 +21,7 @@
         </b-form>
       </div>
       <footer class="pageFooter">
-        2019 &copy; Sing App Vue Admin Dashboard Template.
+        2019 &copy; RTFKT CRM  Vue Admin Dashboard Template.
       </footer>
     </b-container>
   </div>

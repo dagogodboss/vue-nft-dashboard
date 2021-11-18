@@ -1,16 +1,14 @@
 <template>
-  <div class="sidebar-wrapper">
+  <div class="sidebar-wrapper" style="height:100%">
     <nav
         :class="{sidebar: true, sidebarStatic, sidebarOpened}"
         @mouseenter="sidebarMouseEnter"
         @mouseleave="sidebarMouseLeave"
+        style="height:100vh"
     >
       <header class="logo">
-        <router-link to="/app/dashboard"><span class="primary-word">Sing</span> <span class="secondary-word"> App</span></router-link>
+        <router-link to="/app/dashboard"><span class="primary-word">RTFKT</span> <span class="secondary-word"> </span></router-link>
       </header>
-
-      <a class="generator-link navTitle" target="_blank" href="https://flatlogic.com/generator">Generate App</a>
-
       <h5 class="navTitle first">
         APP
       </h5>
@@ -25,112 +23,69 @@
         />
         <NavLink
             :activeItem="activeItem"
-            header="Typography"
-            link="/app/typography"
-            iconName="flaticon-list"
-            index="typography"
+            header="Products"
+            link="/app/products"
+            iconName="glyphicon glyphicon-th-list"
+            index="products"
             isHeader
         />
         <NavLink
             :activeItem="activeItem"
-            header="Tables Basic"
-            link="/app/tables"
-            iconName="flaticon-equal-1"
-            index="tables"
+            header="Game Avatar"
+            link="/app/avatars"
+            iconName="flaticon-th-large"
+            index="avatars"
             isHeader
         />
         <NavLink
             :activeItem="activeItem"
-            header="Notifications"
-            link="/app/notifications"
-            iconName="flaticon-bell"
-            index="notifications"
+            header="NFTs"
+            link="/app/nfts"
+            iconName="glyphicon glyphicon-euro"
+            index="nfts"
             isHeader
         />
         <NavLink
             :activeItem="activeItem"
-            header="Components"
-            link="/app/components"
-            iconName="flaticon-network"
-            index="components"
-            :childrenLinks="[
-              { header: 'Charts', link: '/app/components/charts' },
-              { header: 'Icons', link: '/app/components/icons' },
-              { header: 'Maps', link: '/app/components/maps' },
-            ]"
+            header="Users"
+            link="/app/users"
+            iconName="flaticon-user"
+            index="users"
+            isHeader
         />
       </ul>
       <h5 class="navTitle">
-        LABELS
+        STATUS
       </h5>
       <ul class="sidebarLabels">
-        <li>
-          <a href="#">
-            <i class="fa fa-circle text-danger"/>
-            <span class="labelName">Core</span>
-          </a>
+        <li v-if="isUserConnected">
+          <i class="fa fa-circle text-success" style="margin-right: 19px !important; display: inline;"/>
+          <span class="labelName">Wallet Conntected</span>
         </li>
-        <li>
-          <a href="#">
-            <i class="fa fa-circle text-primary"/>
-            <span class="labelName">UI Elements</span>
-          </a>
+        <li v-if="!isUserConnected">
+          <i class="fa fa-circle text-danger" style="margin-right: 19px !important; display: inline;"/>
+          <span class="labelName">Wallet Disconntected</span>
         </li>
-        <li>
-          <a href="#">
-            <i class="fa fa-circle text-success"/>
-            <span class="labelName">Forms</span>
-          </a>
-        </li>
+
       </ul>
       <h5 class="navTitle">
-        PROJECTS
+        Blockchain Info
       </h5>
-      <div class="sidebarAlerts">
-        <b-alert
-            v-for="alert in alerts"
-            :key="alert.id"
-            class="sidebarAlert" variant="transparent"
-            show dismissible
-        >
-          <span>{{alert.title}}</span><br/>
-          <b-progress class="sidebarProgress progress-xs mt-1"
-                      :variant="alert.color" :value="alert.value" :max="100"/>
-          <small>{{alert.footer}}</small>
-        </b-alert>
+      <div class="sidebarAlerts" style="padding-left: 25px">
+        <small>{{getChainName}}</small>
       </div>
     </nav>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import isScreen from '@/core/screenHelper';
 import NavLink from './NavLink/NavLink';
 
 export default {
   name: 'Sidebar',
   components: { NavLink },
-  data() {
-    return {
-      alerts: [
-        {
-          id: 0,
-          title: 'Sales Report',
-          value: 15,
-          footer: 'Calculating x-axis bias... 65%',
-          color: 'danger',
-        },
-        {
-          id: 1,
-          title: 'Personal Responsibility',
-          value: 20,
-          footer: 'Provide required notes',
-          color: 'primary',
-        },
-      ],
-    };
-  },
   methods: {
     ...mapActions('layout', ['changeSidebarActive', 'switchSidebar']),
     setActiveByRoute() {
@@ -160,6 +115,8 @@ export default {
       sidebarOpened: state => !state.sidebarClose,
       activeItem: state => state.sidebarActiveElement,
     }),
+    ...mapGetters("accounts", ["getChainName", "isUserConnected", "getWeb3Modal"]),
+
   },
 };
 </script>

@@ -1,7 +1,7 @@
 export default {
   bigStat: [
     {
-      product: 'Light Blue',
+      product: 'Users Today',
       total: '4,232',
       color: 'primary',
       registrations: {
@@ -14,7 +14,7 @@ export default {
       },
     },
     {
-      product: 'Sing App',
+      product: 'Users 7 Day',
       total: '754',
       color: 'danger',
       registrations: {
@@ -27,7 +27,7 @@ export default {
       },
     },
     {
-      product: 'RNS',
+      product: 'Users 30 Days ',
       total: '1,025',
       color: 'info',
       registrations: {

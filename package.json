@@ -1,5 +1,5 @@
 {
-  "name": "sing-app-vue",
+  "name": "rtfkt-crm-vue",
   "version": "2.1.8",
   "private": true,
   "scripts": {
@@ -11,11 +11,13 @@
   "dependencies": {
     "animate.css": "^4.1.1",
     "apexcharts": "^3.22.2",
+    "authereum": "^0.1.14",
     "awesome-bootstrap-checkbox": "^1.0.1",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "2.21.2",
     "css-loader": "^1.0.1",
     "echarts": "^4.9.0",
+    "ethers": "^5.5.1",
     "expose-loader": "^0.7.5",
     "font-awesome": "4.7.0",
     "glyphicons-halflings": "^1.9.1",
@@ -35,6 +37,8 @@
     "vue2-google-maps": "^0.10.7",
     "vuetrend": "^0.3.4",
     "vuex": "^3.5.1",
+    "web3": "^1.6.0",
+    "web3modal": "^1.9.4",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
