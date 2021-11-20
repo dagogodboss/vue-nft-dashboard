@@ -16,6 +16,9 @@ import GoogleMapPage from '@/pages/Maps/Google';
 // Main
 import AnalyticsPage from '@/pages/Dashboard/Dashboard';
 
+// Main
+import NftPage from '@/pages/NFT/Nft';
+
 // Charts
 import ChartsPage from '@/pages/Charts/Charts';
 
@@ -56,6 +59,12 @@ export default new Router({
           path: 'dashboard',
           name: 'AnalyticsPage',
           component: AnalyticsPage,
+        },
+        {
+          path: 'nfts',
+          name: 'NftPage ',
+          component: NftPage ,
+          
         },
         {
           path: 'typography',

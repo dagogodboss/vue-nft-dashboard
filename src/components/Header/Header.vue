@@ -31,6 +31,7 @@
           </b-input-group>
         </b-form-group>
       </b-form>
+       
     </b-nav>
     <a class="navbarBrand d-md-none">
       <i class="fa fa-circle text-danger" />
@@ -39,11 +40,14 @@
       &nbsp;
       <i class="fa fa-circle text-primary" />
     </a>
+        
+  <b-button @click="logout" class="header-button" size="lg">DISCONNECT</b-button>
+
   </b-navbar>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import Notifications from '@/components/Notifications/Notifications';
 
 export default {
@@ -51,9 +55,11 @@ export default {
   components: { Notifications },
   computed: {
     ...mapState('layout', ['sidebarClose', 'sidebarStatic']),
+    ...mapGetters('accounts',['getActiveAccount'])
   },
   methods: {
     ...mapActions('layout', ['toggleSidebar', 'switchSidebar', 'changeSidebarActive']),
+    ...mapActions('accounts',['disconnectWeb3Modal']),
     switchSidebarMethod() {
       if (!this.sidebarClose) {
         this.switchSidebar(true);
@@ -77,8 +83,7 @@ export default {
       }
     },
     logout() {
-      window.localStorage.setItem('authenticated', false);
-      this.$router.push('/login');
+      this.disconnectWeb3Modal()
     },
   }
 };

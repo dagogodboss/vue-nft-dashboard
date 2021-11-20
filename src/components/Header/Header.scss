@@ -80,6 +80,17 @@
       margin-right: $content-padding-sm;
     }
   }
+  .header-button{
+    display: flex;
+    margin-left: auto;
+    padding-right: 1rem;
+    background-color: #002B49;
+    color: #fff;
+    &:hover{
+      background-color: #5CB0FF;
+      color: #002B49;
+    }
+  }
 
   .form-group {
     width: 300px;

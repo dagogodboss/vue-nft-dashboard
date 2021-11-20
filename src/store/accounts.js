@@ -95,17 +95,18 @@ const actions = {
         commit("setWeb3Provider", providerW3m);
         actions.fetchActiveBalance({ commit });
         router.push('/app/dashboard');
-      
-        // window.location.href = '/app/dashboard';
-       
-        //window.location.href = '/app/dashboard';
        
     },
 
-    async   disconnectWeb3Modal({ commit }) {
+    async  disconnectWeb3Modal({ commit }) {
     window.localStorage.setItem('authenticated', 'false');
+    if (state.providerW3m.close && state.providerW3m !== null) {
+      await state.providerW3m.close();
+   }
+  let modalCache = await state.web3Modal.clearCachedProvider();
     commit("setIsConnected", false);
-  await commit("disconnectWallet");
+   commit("disconnectWallet");
+   commit("clearModalCache", modalCache);
     router.push('/login');
 
     },
@@ -141,15 +142,18 @@ const mutations = {
         state.activeAccount = null;
         state.activeBalance = 0;
         state.web3 = null;
-        if (state.providerW3m.close && state.providerW3m !== null) {
+     /*    if (state.providerW3m.close && state.providerW3m !== null) {
              state.providerW3m.close();
-        }
-        state.providerW3m = null;
-      state.web3Modal.clearCachedProvider();
+        } */
+        // state.web3Modal.clearCachedProvider();
+       
+    
 
-       // window.location.href = '../'; // redirect to the Main page
     },
-
+    clearModalCache(state, modalCache){
+        state.web3Modal = modalCache;
+        state.providerW3m = null;
+    },
     setActiveAccount(state, selectedAddress) {
         state.activeAccount = selectedAddress;
     },
