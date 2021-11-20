@@ -2,6 +2,7 @@ import Web3Modal from "web3modal";
 import Web3 from "web3";
 // import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import Authereum from "authereum";
+import router  from "../Routes"
 
 const state = {
     activeAccount: null,
@@ -86,22 +87,26 @@ const actions = {
     },
 
     async connectWeb3Modal({ commit }) {
+        window.localStorage.setItem('authenticated', 'true');
         let providerW3m = await state.web3Modal.connect();
         commit("setIsConnected", true);
-
         commit("setActiveAccount", window.ethereum.selectedAddress);
         commit("setChainData", window.ethereum.chainId);
         commit("setWeb3Provider", providerW3m);
         actions.fetchActiveBalance({ commit });
-        window.localStorage.setItem('authenticated', true);
+        router.push('/app/dashboard');
+      
         // window.location.href = '/app/dashboard';
-        // this.$router.push('/app/dashboard');
+       
+        //window.location.href = '/app/dashboard';
+       
     },
 
-    async disconnectWeb3Modal({ commit }) {
-        commit("disconnectWallet");
-        commit("setIsConnected", false);
-        window.localStorage.setItem('authenticated', false);
+    async   disconnectWeb3Modal({ commit }) {
+    window.localStorage.setItem('authenticated', 'false');
+    commit("setIsConnected", false);
+  await commit("disconnectWallet");
+    router.push('/login');
 
     },
 
@@ -132,17 +137,17 @@ const actions = {
 
 const mutations = {
 
-    async disconnectWallet(state) {
+     disconnectWallet(state) {
         state.activeAccount = null;
         state.activeBalance = 0;
         state.web3 = null;
         if (state.providerW3m.close && state.providerW3m !== null) {
-            await state.providerW3m.close();
+             state.providerW3m.close();
         }
         state.providerW3m = null;
-        await state.web3Modal.clearCachedProvider();
+      state.web3Modal.clearCachedProvider();
 
-        window.location.href = '../'; // redirect to the Main page
+       // window.location.href = '../'; // redirect to the Main page
     },
 
     setActiveAccount(state, selectedAddress) {
@@ -188,7 +193,7 @@ const mutations = {
     setIsConnected(state, isConnected) {
         state.isConnected = isConnected;
         // add to persistent storage so that the user can be logged back in when revisiting website
-        localStorage.setItem('isConnected', isConnected);
+        localStorage.setItem('isConnected', `${isConnected}`);
     },
 
     setWeb3ModalInstance(state, w3mObject) {

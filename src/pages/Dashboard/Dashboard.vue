@@ -107,6 +107,7 @@ import Widget from '@/components/Widget/Widget';
 import BigStat from './components/BigStat/BigStat';
 import mock from './mock';
 
+
 export default {
   name: 'Dashboard',
   components: {
@@ -118,6 +119,7 @@ export default {
     };
   },
   methods: {
+      
     getRandomData() {
       const arr = [];
 
@@ -125,8 +127,11 @@ export default {
         arr.push(Math.random().toFixed(1) * 10);
       }
 
-      return arr;
-    },
+      return arr;},
+      
+  
+  
+   
     getRevenueData() {
       const data = [];
       const seriesCount = 3;
@@ -143,7 +148,14 @@ export default {
     }
   },
   computed: {
-  }
+  },
+     beforeRouteEnter(to, from, next) {
+     if(window.localStorage.getItem("authenticated") === 'true' /* && window.localStorage.getItem("isConnected") === 'true' */){
+       next()
+     }
+     else{
+       next('/login')
+     }},
 };
 </script>
 

@@ -58,13 +58,13 @@
         STATUS
       </h5>
       <ul class="sidebarLabels">
-        <li v-if="isUserConnected">
+        <li v-if="isConnected">
           <i class="fa fa-circle text-success" style="margin-right: 19px !important; display: inline;"/>
-          <span class="labelName">Wallet Conntected</span>
+          <span class="labelName">{{walletStatus()}}</span>
         </li>
-        <li v-if="!isUserConnected">
+        <li v-if="!isConnected">
           <i class="fa fa-circle text-danger" style="margin-right: 19px !important; display: inline;"/>
-          <span class="labelName">Wallet Disconntected</span>
+          <span class="labelName">{{walletStatus()}}</span>
         </li>
 
       </ul>
@@ -86,6 +86,12 @@ import NavLink from './NavLink/NavLink';
 export default {
   name: 'Sidebar',
   components: { NavLink },
+  data(){
+    return {
+      walletConnect: window.localStorage.getItem("isConnected"),
+      isConnected: true
+    }
+  },
   methods: {
     ...mapActions('layout', ['changeSidebarActive', 'switchSidebar']),
     setActiveByRoute() {
@@ -105,7 +111,17 @@ export default {
         this.changeSidebarActive(null);
       }
     },
-  },
+   walletStatus(){
+      if( this.walletConnect === "true" ){
+        this.isConnected = true
+        return "Wallet Connected"
+      }
+      else{
+       this.isConnected = false
+       return "Wallet Disconnected"
+      } 
+    }
+  }, 
   created() {
     this.setActiveByRoute();
   },
@@ -115,7 +131,8 @@ export default {
       sidebarOpened: state => !state.sidebarClose,
       activeItem: state => state.sidebarActiveElement,
     }),
-    ...mapGetters("accounts", ["getChainName", "isUserConnected", "getWeb3Modal"]),
+    ...mapGetters("accounts", ["getChainName", "getWeb3Modal"]),
+   
 
   },
 };

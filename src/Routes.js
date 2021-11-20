@@ -26,8 +26,17 @@ import NotificationsPage from '@/pages/Notifications/Notifications';
 
 Vue.use(Router);
 
+
+
+
+
 export default new Router({
+//  mode: 'history',
   routes: [
+    {
+      path: '/',
+      redirect: '/login',
+    },
     {
       path: '/login',
       name: 'Login',
@@ -52,31 +61,37 @@ export default new Router({
           path: 'typography',
           name: 'TypographyPage',
           component: TypographyPage,
+          
         },
         {
           path: 'components/icons',
           name: 'IconsPage',
           component: IconsPage,
+          
         },
         {
           path: 'notifications',
           name: 'NotificationsPage',
           component: NotificationsPage,
+          
         },
         {
           path: 'components/charts',
           name: 'ChartsPage',
           component: ChartsPage,
+          
         },
         {
           path: 'tables',
           name: 'TablesBasicPage',
           component: TablesBasicPage,
+          
         },
         {
           path: 'components/maps',
           name: 'GoogleMapPage',
           component: GoogleMapPage,
+          
         },
       ],
     },
