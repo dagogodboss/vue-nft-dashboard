@@ -58,13 +58,13 @@
         STATUS
       </h5>
       <ul class="sidebarLabels">
-        <li v-if="isConnected">
+        <li v-if="getActiveAccount">
           <i class="fa fa-circle text-success" style="margin-right: 19px !important; display: inline;"/>
-          <span class="labelName">{{walletStatus()}}</span>
+          <span class="labelName">Wallet Connected</span>
         </li>
-        <li v-if="!isConnected">
+        <li v-if="!getActiveAccount">
           <i class="fa fa-circle text-danger" style="margin-right: 19px !important; display: inline;"/>
-          <span class="labelName">{{walletStatus()}}</span>
+          <span class="labelName">Wallet Disconnected</span>
         </li>
 
       </ul>
@@ -86,12 +86,6 @@ import NavLink from './NavLink/NavLink';
 export default {
   name: 'Sidebar',
   components: { NavLink },
-  data(){
-    return {
-      walletConnect: window.localStorage.getItem("isConnected"),
-      isConnected: true
-    }
-  },
   methods: {
     ...mapActions('layout', ['changeSidebarActive', 'switchSidebar']),
     setActiveByRoute() {
@@ -110,18 +104,15 @@ export default {
         this.switchSidebar(true);
         this.changeSidebarActive(null);
       }
-    },
-   walletStatus(){
-      if( this.walletConnect === "true" ){
-        this.isConnected = true
-        return "Wallet Connected"
-      }
-      else{
-       this.isConnected = false
-       return "Wallet Disconnected"
-      } 
     }
+  
+  },
+  mounted() {
+           this.$store.dispatch("accounts/ethereumListener");
   }, 
+  unmounted(){
+    // return window.ethereum.removeListener('accountsChanged', this.handleAccountsChanged);
+  },
   created() {
     this.setActiveByRoute();
   },
@@ -131,10 +122,12 @@ export default {
       sidebarOpened: state => !state.sidebarClose,
       activeItem: state => state.sidebarActiveElement,
     }),
-    ...mapGetters("accounts", ["getChainName", "getWeb3Modal"]),
-   
-
+    ...mapGetters("accounts", ["getChainName", "getWeb3Modal", "getActiveAccount"]),
+  
   },
+  // watch:{
+   
+  // },
 };
 </script>
 

@@ -104,8 +104,8 @@
 
 <script>
 import Widget from '@/components/Widget/Widget';
-import BigStat from './components/BigStat/BigStat';
-import mock from './mock';
+import BigStat from '../Dashboard/components/BigStat/BigStat.vue';
+import mock from '../Dashboard/mock';
 
 
 export default {
@@ -159,4 +159,4 @@ export default {
 };
 </script>
 
-<style src="./Dashboard.scss" lang="scss" />
+<style src="../Dashboard/Dashboard.scss" lang="scss" />

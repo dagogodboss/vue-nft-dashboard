@@ -16,11 +16,11 @@ const state = {
 };
 
 const getters = {
+   
     getActiveAccount(state) {
         if (!state.activeAccount) {
-            return window.ethereum.selectedAddress;
+         return window.ethereum.selectedAddress;
         }
-
         return state.activeAccount;
     },
     getActiveBalanceWei(state) {
@@ -114,11 +114,18 @@ const actions = {
     async ethereumListener({ commit }) {
 
         window.ethereum.on('accountsChanged', (accounts) => {
-            if (state.isConnected) {
+            if (localStorage.getItem('isConnected')) {
                 commit("setActiveAccount", accounts[0]);
                 commit("setWeb3Provider", state.providerW3m);
                 actions.fetchActiveBalance({ commit });
+               
             }
+            // if(){
+            //     commit("setActiveAccount", accounts[0]);
+            //     commit("setWeb3Provider", state.providerW3m);
+            //     actions.fetchActiveBalance({ commit });
+              
+            // }
         });
 
         window.ethereum.on('chainChanged', (chainId) => {
