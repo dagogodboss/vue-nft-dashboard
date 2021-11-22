@@ -169,13 +169,14 @@ const actions = {
     ,
    async fetchNfts({commit}){
         const contract = await new state.web3.eth.Contract(abi, state.smartContract);
+        // const contract = await new state.web3.eth.Contract(abi).at(state.smartContract)
         if(state.itemSetByUser !== null){
             commit("setItemPerPage",state.itemSetByUser)  
         }
         else{
            return state.pagination.itemPerPage
         }
-        const countNFt = (await contract.methods.totalSupply()).toNumber();
+        let countNFt = await contract.methods.totalSupply().call();
        if(countNFt > 0){
         commit("setMaxTokens", state.pagination.itemPerPage )
        }
@@ -187,8 +188,8 @@ const actions = {
         let name, address, nft_id;
         commit("setTotalItems",countNFt )
         for (let i = 1; i <= state.maxTokens; i++) {
-            address = contract.ownerOf(i);
-            name = contract.tokenURI(i);
+            address = contract.methods.ownerOf(i).call();
+            name = contract.methods.tokenURI(i).call();
             nft_id = i;
             const updatedList = await Promise.all([name, address, nft_id]);
             nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
@@ -265,7 +266,7 @@ state.nfts = nfts;
    setItemPerPage(state,itemSetByUser){
     state.pagination.itemPerPage = itemSetByUser;
    },
-   setMaxToken(state, NFtCount){
+   setMaxTokens(state, NFtCount){
 state.maxTokens = NFtCount;
    },
    setTotalItems(state, count){

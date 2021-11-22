@@ -101,6 +101,9 @@ catch(error){
         this.changeSidebarActive(null);
       }
     },
+    exportToCsv(){
+      
+    }
   },
   computed: {
     ...mapState('layout',["sidebarClose", "sidebarStatic"]),
