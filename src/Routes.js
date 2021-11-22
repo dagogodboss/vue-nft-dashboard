@@ -29,6 +29,13 @@ import NotificationsPage from '@/pages/Notifications/Notifications';
 
 Vue.use(Router);
 
+const isAuth = (to, from, next)=> {
+  if(window.localStorage.getItem("authenticated") === 'true'){
+    next()
+  }
+  else{
+    next('/login')
+  }};
 
 
 
@@ -39,6 +46,7 @@ export default new Router({
     {
       path: '/',
       redirect: '/login',
+      
     },
     {
       path: '/login',
@@ -59,47 +67,55 @@ export default new Router({
           path: 'dashboard',
           name: 'AnalyticsPage',
           component: AnalyticsPage,
+          beforeEnter: isAuth
         },
         {
           path: 'nfts',
           name: 'NftPage ',
           component: NftPage ,
-          
+          beforeEnter: isAuth,
+      
         },
         {
           path: 'typography',
           name: 'TypographyPage',
           component: TypographyPage,
+          beforeEnter: isAuth
           
         },
         {
           path: 'components/icons',
           name: 'IconsPage',
           component: IconsPage,
+          beforeEnter: isAuth
           
         },
         {
           path: 'notifications',
           name: 'NotificationsPage',
           component: NotificationsPage,
+          beforeEnter: isAuth
           
         },
         {
           path: 'components/charts',
           name: 'ChartsPage',
           component: ChartsPage,
+          beforeEnter: isAuth
           
         },
         {
           path: 'tables',
           name: 'TablesBasicPage',
           component: TablesBasicPage,
+          beforeEnter: isAuth
           
         },
         {
           path: 'components/maps',
           name: 'GoogleMapPage',
           component: GoogleMapPage,
+          beforeEnter: isAuth
           
         },
       ],

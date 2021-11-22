@@ -2,102 +2,12 @@
   <div class="dashboard-page">
     <h1 class="page-title">NFT's</h1>
     <b-row>
-<!--       <b-col md="6" xl="3" sm="6" xs="12">
-        <div class="pb-xlg h-100">
-          <Widget class="h-100 mb-0" title="Total Minted NFTs" close>
-            <div class="d-flex justify-content-between align-items-center mb-lg">
-              <h2>4,332</h2>
-              <i class="la la-arrow-right text-primary la-lg rotate-315" />
-            </div>
-            <div class="d-flex flex-wrap justify-content-between">
-              
-            </div>
-          </Widget>
-        </div>
+      <b-col>   
+<div>
+    <b-table striped hover :items="nfts"></b-table>
+  </div>
       </b-col>
-      <b-col md="6" xl="3" sm="6" xs="12">
-        <div class="pb-xlg h-100">
-          <Widget class="h-100 mb-0" title="Total Minted Today" close>
-            <div class="d-flex justify-content-between align-items-center mb-lg">
-              <h2>4,332</h2>
-              <i class="la la-arrow-right text-primary la-lg rotate-315" />
-            </div>
-            <div class="d-flex flex-wrap justify-content-between">
-              
-            </div>
-          </Widget>
-        </div>
-      </b-col>
-      <b-col md="6" xl="3" sm="6" xs="12">
-        <div class="pb-xlg h-100">
-          <Widget class="h-100 mb-0" title="Total Minted Last 7 Days" close>
-            <div class="d-flex justify-content-between align-items-center mb-lg">
-              <h2>4,332</h2>
-              <i class="la la-arrow-right text-primary la-lg rotate-315" />
-            </div>
-            <div class="d-flex flex-wrap justify-content-between">
-              
-            </div>
-          </Widget>
-        </div>
-      </b-col>
-      <b-col md="6" xl="3" sm="6" xs="12">
-        <div class="pb-xlg h-100">
-          <Widget class="h-100 mb-0" title="Total Minted Last 30 Days" close>
-            <div class="d-flex justify-content-between align-items-center mb-lg">
-              <h2>4,332</h2>
-              <i class="la la-arrow-right text-primary la-lg rotate-315" />
-            </div>
-            <div class="d-flex flex-wrap justify-content-between">
-              
-            </div>
-          </Widget>
-        </div>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col xs="12" lg="6" xl="4" v-for="stat in mock.bigStat" :key="stat.id">
-        <BigStat
-          :product="stat.product"
-          :color="stat.color"
-          :total="stat.total"
-          :registrations="stat.registrations"
-          :bounce="stat.bounce"
-        />
-      </b-col>
-    </b-row>
-    <b-row>
-        <b-col xs="12">
-          <Widget
-            title="<h5>User <span class='fw-semi-bold'>List</span></h5>"
-            bodyClass="widget-table-overflow"
-            customHeader
-          >
-            <div class="table-responsive">
-              <table class="table table-striped table-lg mb-0 requests-table">
-                <thead>
-                  <tr class="text-muted">
-                    <th>NAME</th>
-                    <th>EMAIL</th>
-                    <th>DATE JOINED</th>
-                    <th>CITY</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="row in mock.table"
-                    :key="row.id"
-                  >
-                    <td>{{row.name}}</td>
-                    <td>{{row.email}}</td>
-                    <td>{{row.date}}</td>
-                    <td>{{row.city}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Widget>
-        </b-col> -->
+ 
       </b-row>
   </div>
 </template>
@@ -106,6 +16,7 @@
 import Widget from '@/components/Widget/Widget';
 import BigStat from '../Dashboard/components/BigStat/BigStat.vue';
 import mock from '../Dashboard/mock';
+import {mapState } from 'vuex';
 
 
 export default {
@@ -115,7 +26,13 @@ export default {
   },
   data() {
     return {
-      mock
+      mock,
+       items: [
+          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
+          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
+          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
+          { age: 38, first_name: 'Jami', last_name: 'Carney' }
+        ]
     };
   },
   methods: {
@@ -148,15 +65,8 @@ export default {
     }
   },
   computed: {
-  },
-     beforeRouteEnter(to, from, next) {
-     if(window.localStorage.getItem("authenticated") === 'true' /* && window.localStorage.getItem("isConnected") === 'true' */){
-       next()
-     }
-     else{
-       next('/login')
-     }},
-};
+  ...mapState('accounts',['nfts']),
+  },}
 </script>
 
 <style src="../Dashboard/Dashboard.scss" lang="scss" />

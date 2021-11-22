@@ -29,7 +29,6 @@
 
 <script>
 import Widget from '@/components/Widget/Widget';
-// import { mapGetters, mapActions,mapState } from "vuex";
 import { createNamespacedHelpers } from 'vuex';
 const { mapGetters, mapActions } = createNamespacedHelpers('accounts');
 

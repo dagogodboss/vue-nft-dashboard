@@ -111,7 +111,7 @@ export default {
            this.$store.dispatch("accounts/ethereumListener");
   }, 
   unmounted(){
-    // return window.ethereum.removeListener('accountsChanged', this.handleAccountsChanged);
+    this.$store.dispatch("accounts/removeEthereumListener");
   },
   created() {
     this.setActiveByRoute();

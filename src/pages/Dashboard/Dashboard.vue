@@ -148,14 +148,7 @@ export default {
     }
   },
   computed: {
-  },
-     beforeRouteEnter(to, from, next) {
-     if(window.localStorage.getItem("authenticated") === 'true' /* && window.localStorage.getItem("isConnected") === 'true' */){
-       next()
-     }
-     else{
-       next('/login')
-     }},
+  }
 };
 </script>
 
