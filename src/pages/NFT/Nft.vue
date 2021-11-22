@@ -62,7 +62,7 @@ export default {
   ...mapState('accounts',['nfts']),
   },
   unmounted(){
- this.$store.dispatch("accounts/clearNfts")
+ return this.$store.dispatch("accounts/clearNfts")
   },
   }
 

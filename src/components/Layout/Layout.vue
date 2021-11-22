@@ -4,6 +4,7 @@
   <div class="wrap">
     <Header >
       <template v-if="!checkIfOnNav">
+         <b-nav>
         <b-form class="d-sm-down-none ml-5" inline>
         <b-form-group>
           <b-input-group class="input-group-no-border">
@@ -14,24 +15,49 @@
           </b-input-group>
         </b-form-group>
       </b-form>
+         </b-nav>
       </template>
 
-      <template v-if="checkIfOnNav">  
-<div class="flex-container">
-  
-       <b-form  @submit.prevent="handleNft"  class="d-sm-down-none ml-2 mr-2" inline>
+      <template v-if="checkIfOnNav" > 
+         <b-nav> 
+<div class="flex-container" >
+    
+       <b-form  @submit.prevent="getNfts"  class="d-sm-down-none ml-2 mr-2" inline>
       <b-form-input ref="smartContract" id="smartContract" v-model="text" placeholder="Enter nft address"></b-form-input>
     </b-form>
-     <b-form-select ref="itemPerPage" id="itemPerPage" v-model="selected"  size="sm" :options="options" class="mr-2 mt-3"></b-form-select>
-        <b-button @click="getNfts" class="header-button-nft mr-2" size="sm"><span class="header-button-span">GET NFT </span></b-button>
-  <b-button @click="exportToCsv" class="header-button-csv mr-2" size="sm"><span class="header-button-span"> Export as CSV</span></b-button>
+     <b-form-select ref="itemPerPage" id="itemPerPage" v-model="selected"  size="sm" :options="options" class="d-sm-down-none mr-2 mt-3"></b-form-select>
+        <b-button @click="getNfts" class="header-button-nft mr-2 d-sm-down-none" size="sm"><span class="header-button-span">GET NFT </span></b-button>
+  <b-button @click="exportToCsv" class="header-button-csv mr-2 d-sm-down-none" size="sm"><span class="header-button-span"> Export as CSV</span></b-button>
   
       </div>
+         </b-nav>
       </template>
     </Header>
+    <div v-if="!checkIfOnNav" class="flex-container mobile-section">
+<b-form class="d-md-none d-lg-none ml-5" inline>
+        <b-form-group>
+          <b-input-group class="input-group-no-border">
+            <template v-slot:prepend>
+              <b-input-group-text><i class='fi flaticon-search-2'/></b-input-group-text>
+            </template>
+            <b-form-input id="search-input" placeholder="Search Dashboard" />
+          </b-input-group>
+        </b-form-group>
+      </b-form>
+    </div>
+    <div v-if="checkIfOnNav" class="flex-container mobile-section">
+           <b-form  @submit.prevent="getNfts"  class="d-md-none d-lg-none ml-2 mr-2" inline>
+      <b-form-input ref="smartContract" id="smartContract" v-model="text" placeholder="Enter nft address"></b-form-input>
+    </b-form>
+     <b-form-select ref="itemPerPage" id="itemPerPage" v-model="selected"  size="sm" :options="options" class="d-md-none d-lg-none mr-2 mt-3"></b-form-select>
+        <b-button @click="getNfts" class="header-button-nft mr-2 d-md-none d-lg-none" size="sm"><span class="header-button-span">GET NFT </span></b-button>
+  <b-button @click="exportToCsv" class="header-button-csv mr-2 d-md-none d-lg-none" size="sm"><span class="header-button-span"> Export as CSV</span></b-button>
+  
+    </div>
     <v-touch class="content" @swipe="handleSwipe" :swipe-options="{direction: 'horizontal'}">
       <breadcrumb-history></breadcrumb-history>
       <transition name="router-animation">
+
         <router-view />
       </transition>
       <footer class="contentFooter">
@@ -57,6 +83,7 @@ export default {
   components: { Sidebar, Header, BreadcrumbHistory },
   data(){
     return{
+      text: null,
       selected : null,
      options : [
        {value:"null",  text:"Select Item per Page"  },
@@ -73,7 +100,7 @@ export default {
   methods: {
     ...mapActions('layout',['switchSidebar', 'handleSwipe', 'changeSidebarActive', 'toggleSidebar'],
     ),
-    ...mapActions('accounts',['fetchNfts','fetchUserRefs']),
+    ...mapActions('accounts',['fetchNfts','fetchUserRefs','clearNfts']),
     ...mapMutations('accounts',['setNfts']),
 
    getNfts(){

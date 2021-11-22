@@ -39,7 +39,7 @@
         />
         <NavLink
             :activeItem="activeItem"
-            header="NFTs"
+            header="NFT's"
             link="/app/nfts"
             iconName="glyphicon glyphicon-euro"
             index="nfts"

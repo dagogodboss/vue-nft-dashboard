@@ -9,18 +9,17 @@
           <i class='fi flaticon-menu' />
         </a>
       </b-nav-item>
-      <b-nav-item class="d-md-down-none">
+          <b-nav-item class="d-md-down-none">
         <a href="#" class="px-2">
           <i class='fi flaticon-flip' />
         </a>
       </b-nav-item>
       <b-nav-item class="d-md-down-none">
         <a href="#" class="px-2">
-          <i class='fi flaticon-close' />
+          <i class='fi flaticon-close' @click="clearNfts" />
         </a>
       </b-nav-item>
-    </b-nav>
-    <b-nav>
+         
       <slot></slot>
     </b-nav>
    
@@ -32,7 +31,7 @@
       <i class="fa fa-circle text-primary" />
     </a>
    
-  <b-button @click="logout" class="header-button" size="lg">DISCONNECT</b-button>
+  <b-button @click="logout" class="header-button" size="sm">DISCONNECT</b-button>
 
   </b-navbar>
 </template>
@@ -50,7 +49,7 @@ export default {
   },
   methods: {
     ...mapActions('layout', ['toggleSidebar', 'switchSidebar', 'changeSidebarActive']),
-    ...mapActions('accounts',['disconnectWeb3Modal']),
+    ...mapActions('accounts',['disconnectWeb3Modal','clearNfts']),
     switchSidebarMethod() {
       if (!this.sidebarClose) {
         this.switchSidebar(true);
