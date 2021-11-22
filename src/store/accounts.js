@@ -120,6 +120,9 @@ const actions = {
             commit("setWeb3Provider", state.providerW3m);
             actions.fetchActiveBalance({ commit });
         });
+        window.ethereum.on('disconnect', () => {
+            actions.disconnectWeb3Modal({ commit });
+        })
 
     },
 
