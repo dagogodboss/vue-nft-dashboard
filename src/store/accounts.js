@@ -56,9 +56,6 @@ const getters = {
     },
     isUserConnected(state) {
         return state.isConnected;
-    },
-    getNft(state){
-        return state.nfts;
     }
 };
 
@@ -164,10 +161,11 @@ const actions = {
     },
     fetchUserRefs({commit}, payload){
         commit("setSmartContract", payload.smartContractRef);
-        commit("setUserItem", payload.userItemsRef)
+        commit("setItemsToDisplay", payload.userItemsRef)
     }
     ,
    async fetchNfts({commit}){
+       commit("setNftLoading");
         const contract = await new state.web3.eth.Contract(abi, state.smartContract);
         // const contract = await new state.web3.eth.Contract(abi).at(state.smartContract)
         if(state.itemSetByUser !== null){
@@ -198,6 +196,10 @@ const actions = {
   
 
     },
+    
+    clearNfts({commit}){
+        commit("resetNftTable")
+    }
 };
 
 const mutations = {
@@ -272,11 +274,24 @@ state.maxTokens = NFtCount;
    setTotalItems(state, count){
        state.pagination.totalItem = count
    },
-   setUserItem(state, payload){
+   setItemsToDisplay(state, payload){
     state.itemSetByUser= payload
 },
 setSmartContract(state, payload){
     state.smartContract = payload
+},
+setNftLoading(state){
+    let isLoading =  [{
+        name: 'LOADING...',
+        address: 'LOADING...',
+        nft_id: 'LOADING...'
+    }];
+    state.nfts = isLoading;
+},
+resetNftTable(state){
+    state.nfts = [];
+    state.itemSetByUser = null,
+    state.smartContract = null
 }
 };
 

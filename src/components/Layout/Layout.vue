@@ -23,8 +23,8 @@
       <b-form-input ref="smartContract" id="smartContract" v-model="text" placeholder="Enter nft address"></b-form-input>
     </b-form>
      <b-form-select ref="itemPerPage" id="itemPerPage" v-model="selected"  size="sm" :options="options" class="mr-2 mt-3"></b-form-select>
-        <b-button @click="handleNft" class="header-button-nft mr-2" size="sm"><span class="header-button-span">GET NFT </span></b-button>
-  <b-button class="header-button-csv mr-2" size="sm"><span class="header-button-span"> Export as CSV</span></b-button>
+        <b-button @click="getNfts" class="header-button-nft mr-2" size="sm"><span class="header-button-span">GET NFT </span></b-button>
+  <b-button @click="exportToCsv" class="header-button-csv mr-2" size="sm"><span class="header-button-span"> Export as CSV</span></b-button>
   
       </div>
       </template>
@@ -76,14 +76,14 @@ export default {
     ...mapActions('accounts',['fetchNfts','fetchUserRefs']),
     ...mapMutations('accounts',['setNfts']),
 
-   async handleNft(){
+   getNfts(){
         let payload = {
       smartContractRef: this.$refs.smartContract.value,
       userItemsRef : this.$refs.itemPerPage.value
     };
 try{
   this.fetchUserRefs(payload);
-  await this.fetchNfts()
+  this.fetchNfts()
 }
 catch(error){
   this.setNfts([{
@@ -101,15 +101,43 @@ catch(error){
         this.changeSidebarActive(null);
       }
     },
-    exportToCsv(){
-      
-    }
+    downloadCSVFile(CSV, fileName) {
+        const link = document.createElement('a');
+        link.setAttribute('href', `data:text/csv;charset=utf-8,${encodeURIComponent(CSV)}`);
+        link.setAttribute('download', fileName);
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+    },
+      exportToCsv(){
+       if (this.nfts.length > 0) {
+            const { nfts } = this;
+            let array = typeof nfts != 'object' ? JSON.parse(nfts) : nfts;
+            let str = '';
+            for (let i = 0; i < array.length; i++) {
+                let line = '';
+                for (let index in array[i]) {
+                    if (line != '') line += ','
+
+                    line += array[i][index];
+                }
+
+                str += line + '\r\n';
+            }
+   this.downloadCSVFile(str, "CSV_EXPORT" + Date().normalize() + ".csv");
+       return null;
+        }
+        else{
+return null;
+        }
+    
+    },
   },
   computed: {
     ...mapState('layout',["sidebarClose", "sidebarStatic"]),
     ...mapState('accounts',['nfts']),
-  
-  
     checkIfOnNav(){
       if(this.$route.name == "NftPage "){
         return true
@@ -117,7 +145,11 @@ catch(error){
       else{
         return false
       }
-    }
+    },
+  
+   
+
+   
   },
   created() {
     const staticSidebar = JSON.parse(localStorage.getItem('sidebarStatic'));

@@ -16,7 +16,7 @@
 import Widget from '@/components/Widget/Widget';
 import BigStat from '../Dashboard/components/BigStat/BigStat.vue';
 import mock from '../Dashboard/mock';
-import {mapState } from 'vuex';
+import {mapState} from 'vuex';
 
 
 export default {
@@ -27,12 +27,6 @@ export default {
   data() {
     return {
       mock,
-       items: [
-          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' }
-        ]
     };
   },
   methods: {
@@ -66,7 +60,12 @@ export default {
   },
   computed: {
   ...mapState('accounts',['nfts']),
-  },}
+  },
+  unmounted(){
+ this.$store.dispatch("accounts/clearNfts")
+  },
+  }
+
 </script>
 
 <style src="../Dashboard/Dashboard.scss" lang="scss" />
