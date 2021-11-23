@@ -156,6 +156,7 @@ const actions = {
     },
 
     async fetchActiveBalance({ commit }) {
+        console.log("HS")
         let balance = await state.web3.eth.getBalance(state.activeAccount);
         commit("setActiveBalance", balance);
     },
