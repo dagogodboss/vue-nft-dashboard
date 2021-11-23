@@ -52,10 +52,16 @@ const getters = {
         }
     },
     getWeb3Modal(state) {
-        return state.web3Modal;
+        // return state.web3Modal;
+        if (state.web3Modal) {
+            return state.web3Modal;
+        } else {
+            return new Web3(Web3.givenProvider);
+        }
     },
     isUserConnected(state) {
         return state.isConnected;
+        
     }
 };
 
@@ -107,15 +113,17 @@ const actions = {
 
     async  disconnectWeb3Modal({ commit }) {
     window.localStorage.setItem('authenticated', 'false');
-  let modalCache = await state.web3Modal.clearCachedProvider();
+  let modalCache = state.web3Modal.clearCachedProvider();
     commit("setIsConnected", false);
    commit("disconnectWallet");
    commit("clearModalCache", modalCache);
    if(router.currentRoute.name == "Login"){
+  
 return null;
    }
    else{
     router.push('/login');
+   
    }
  
 
@@ -125,11 +133,11 @@ return null;
 
         window.ethereum.on('accountsChanged', (accounts) => {
             if (localStorage.getItem('isConnected') == 'true') {
-                // actions.disconnectWeb3Modal({commit});
+                actions.disconnectWeb3Modal({commit});
                 commit("setActiveAccount", accounts[0]);
                 commit("setWeb3Provider", state.providerW3m);
                 actions.fetchActiveBalance({ commit });
-                actions.disconnectWeb3Modal({commit});
+              
             }
            
         });
@@ -178,7 +186,7 @@ return null;
             commit("setWeb3Provider", providerW3m);
             contract =  new state.web3.eth.Contract(abi, state.smartContract);
         }
-        contract =  new state.web3.eth.Contract(abi, state.smartContract);
+        contract = await new state.web3.eth.Contract(abi, state.smartContract);
         // const contract = await new state.web3.eth.Contract(abi).at(state.smartContract)
         if(state.itemSetByUser !== null){
             commit("setItemPerPage",state.itemSetByUser)  

@@ -58,11 +58,11 @@
         STATUS
       </h5>
       <ul class="sidebarLabels">
-        <li v-if="getActiveAccount">
+        <li v-if="setWalletConnected">
           <i class="fa fa-circle text-success" style="margin-right: 19px !important; display: inline;"/>
           <span class="labelName">Wallet Connected</span>
         </li>
-        <li v-if="!getActiveAccount">
+        <li v-if="!setWalletConnected">
           <i class="fa fa-circle text-danger" style="margin-right: 19px !important; display: inline;"/>
           <span class="labelName">Wallet Disconnected</span>
         </li>
@@ -108,10 +108,10 @@ export default {
   
   },
   mounted() {
-           this.$store.dispatch("accounts/ethereumListener");
+          return  this.$store.dispatch("accounts/ethereumListener");
   }, 
   unmounted(){
-    this.$store.dispatch("accounts/removeEthereumListener");
+    return this.$store.dispatch("accounts/removeEthereumListener");
   },
   created() {
     this.setActiveByRoute();
@@ -123,11 +123,15 @@ export default {
       activeItem: state => state.sidebarActiveElement,
     }),
     ...mapGetters("accounts", ["getChainName", "getWeb3Modal", "getActiveAccount"]),
-  
+  setWalletConnected(){
+    if(localStorage.getItem('isConnected') == 'true'){
+      return true
+    }
+    else{
+      return false
+    }
   },
-  // watch:{
-   
-  // },
+  },
 };
 </script>
 
