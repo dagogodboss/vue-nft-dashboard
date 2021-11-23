@@ -59,10 +59,14 @@ export default {
   
   }, 
 
-  mounted() {
-    this.$store.dispatch("accounts/initWeb3Modal");
-    this.$store.dispatch("accounts/ethereumListener");
-    return this.$store.getters.getWeb3;
+ mounted() {
+    // callGetters(){
+    //   return this.$store.getters
+    // }
+    return this.$store.dispatch("accounts/initWeb3Modal") , this.$store.dispatch("accounts/ethereumListener");
+    
+     
+  
   },
 
   beforeRouteEnter(to, from, next) {
