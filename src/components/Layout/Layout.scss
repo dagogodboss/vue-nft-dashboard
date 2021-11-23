@@ -69,8 +69,6 @@ button.header-button{
   &-nft{
     height: 40px;
     display: flex;
-    align-self: center;
-    margin-right: 1rem;
     background-color: #fff; 
     color: #002B49;
     align-items: center;
@@ -81,8 +79,6 @@ button.header-button{
   &-csv{
     height: 40px;
     display: flex;
-    align-self: center;
-    margin-right: 1rem;
     background-color:#002B49;
     color:  #fff; 
     align-items: center;
@@ -99,9 +95,13 @@ button.header-button{
 .flex-container{
   display: flex;
   justify-content: flex-start;
+
 }
 .mobile-section{
   width: 50%;
+  justify-content: space-evenly !important;
   flex-direction: column;
+  align-items: flex-start;
   margin-top: 2rem;
+  margin-left: 2rem;
 }
