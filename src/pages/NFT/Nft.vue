@@ -30,33 +30,7 @@ export default {
     };
   },
   methods: {
-      
-    getRandomData() {
-      const arr = [];
 
-      for (let i = 0; i < 25; i += 1) {
-        arr.push(Math.random().toFixed(1) * 10);
-      }
-
-      return arr;},
-      
-  
-  
-   
-    getRevenueData() {
-      const data = [];
-      const seriesCount = 3;
-      const accessories = ['SMX', 'Direct', 'Networks'];
-
-      for (let i = 0; i < seriesCount; i += 1) {
-        data.push({
-          label: accessories[i],
-          data: Math.floor(Math.random() * 100) + 1,
-        });
-      }
-
-      return data;
-    }
   },
   computed: {
   ...mapState('accounts',['nfts']),

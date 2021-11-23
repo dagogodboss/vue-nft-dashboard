@@ -30,12 +30,15 @@ import NotificationsPage from '@/pages/Notifications/Notifications';
 Vue.use(Router);
 
 const isAuth = (to, from, next)=> {
-  if(window.localStorage.getItem("authenticated") === 'true'){
-    next()
+  if(window.ethereum.selectedAddress != ''){
+    if(window.localStorage.getItem("authenticated") === 'true'){
+      next()
+    }
+    else{
+      next('/login')
+    }
   }
-  else{
-    next('/login')
-  }};
+};
 
 
 

@@ -83,7 +83,7 @@ const actions = {
 
         // if the user is flagged as already connected, automatically connect back to Web3Modal
         if (localStorage.getItem('isConnected') === "true") {
-            let providerW3m = await w3mObject.connect();
+            let providerW3m = await w3mObject.connect(); // alternative to this Object is the window.ethereum
             commit("setIsConnected", true);
             commit("setActiveAccount", window.ethereum.selectedAddress);
             commit("setChainData", window.ethereum.chainId);
@@ -172,7 +172,13 @@ return null;
     ,
    async fetchNfts({commit}){
        commit("setNftLoading");
-        const contract = await new state.web3.eth.Contract(abi, state.smartContract);
+        let contract;
+        if(state.web3 == null){
+            let providerW3m = window.ethereum;
+            commit("setWeb3Provider", providerW3m);
+            contract =  new state.web3.eth.Contract(abi, state.smartContract);
+        }
+        contract =  new state.web3.eth.Contract(abi, state.smartContract);
         // const contract = await new state.web3.eth.Contract(abi).at(state.smartContract)
         if(state.itemSetByUser !== null){
             commit("setItemPerPage",state.itemSetByUser)  
@@ -181,6 +187,7 @@ return null;
            return state.pagination.itemPerPage
         }
         let countNFt = await contract.methods.totalSupply().call();
+        console.log(countNFt);
        if(countNFt > 0){
         commit("setMaxTokens", state.pagination.itemPerPage )
        }
@@ -190,11 +197,11 @@ return null;
         let nftDetails = [];
           
         let name, address, nft_id;
-        commit("setTotalItems",countNFt )
+        commit("setTotalItems", countNFt )
         for (let i = 1; i <= state.maxTokens; i++) {
-            address = contract.methods.ownerOf(i).call();
-            name = contract.methods.tokenURI(i).call();
-            nft_id = i;
+            nft_id = await contract.methods.tokenByIndex(i).call();
+            address = contract.methods.ownerOf(nft_id.toString()).call();
+            name = contract.methods.tokenURI(nft_id.toString()).call();
             const updatedList = await Promise.all([name, address, nft_id]);
             nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
         }
