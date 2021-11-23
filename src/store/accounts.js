@@ -107,26 +107,31 @@ const actions = {
 
     async  disconnectWeb3Modal({ commit }) {
     window.localStorage.setItem('authenticated', 'false');
-    if (state.providerW3m.close && state.providerW3m !== null) {
-      await state.providerW3m.close();
-   }
   let modalCache = await state.web3Modal.clearCachedProvider();
     commit("setIsConnected", false);
    commit("disconnectWallet");
    commit("clearModalCache", modalCache);
+   if(router.currentRoute.name == "Login"){
+return null;
+   }
+   else{
     router.push('/login');
+   }
+ 
 
     },
 
     async ethereumListener({ commit }) {
 
         window.ethereum.on('accountsChanged', (accounts) => {
-            if (localStorage.getItem('isConnected')) {
+            if (localStorage.getItem('isConnected') == 'true') {
+                // actions.disconnectWeb3Modal({commit});
                 commit("setActiveAccount", accounts[0]);
                 commit("setWeb3Provider", state.providerW3m);
                 actions.fetchActiveBalance({ commit });
-               
+                actions.disconnectWeb3Modal({commit});
             }
+           
         });
 
         window.ethereum.on('chainChanged', (chainId) => {
@@ -207,7 +212,17 @@ const mutations = {
      disconnectWallet(state) {
         state.activeAccount = null;
         state.activeBalance = 0;
-        state.web3 = null;
+    state.chainId =null,
+    state.chainName = null,
+    state.web3 = null,
+    state.nfts = [],
+    state.pagination = {
+        itemPerPage: 0,
+        totalItem: 0,
+    },
+    state.maxTokens =0,
+    state.itemSetByUser = null,
+    state.smartContract= null
     },
     clearModalCache(state, modalCache){
         state.web3Modal = modalCache;
@@ -248,7 +263,7 @@ const mutations = {
         }
     },
 
-    async setWeb3Provider(state, providerW3m) {
+    setWeb3Provider(state, providerW3m) {
         state.providerW3m = providerW3m;
         state.web3 = new Web3(providerW3m);
     },

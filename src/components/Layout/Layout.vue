@@ -46,12 +46,12 @@
       </b-form>
     </div>
     <div v-if="checkIfOnNav" class="flex-container mobile-section">
-           <b-form  @submit.prevent="getNfts"  class="d-md-none d-lg-none ml-2 mr-2" inline>
+           <b-form  @submit.prevent="getNfts"  class="d-md-none d-lg-none " inline>
       <b-form-input ref="smartContract" id="smartContract" v-model="text" placeholder="Enter nft address"></b-form-input>
     </b-form>
-     <b-form-select ref="itemPerPage" id="itemPerPage" v-model="selected"  size="sm" :options="options" class="d-md-none d-lg-none mr-2 mt-3"></b-form-select>
-        <b-button @click="getNfts" class="header-button-nft mr-2 d-md-none d-lg-none" size="sm"><span class="header-button-span">GET NFT </span></b-button>
-  <b-button @click="exportToCsv" class="header-button-csv mr-2 d-md-none d-lg-none" size="sm"><span class="header-button-span"> Export as CSV</span></b-button>
+     <b-form-select ref="itemPerPage" id="itemPerPage" v-model="selected"  size="sm" :options="options" class="d-md-none d-lg-none mt-3"></b-form-select>
+        <b-button @click="getNfts" class="header-button-nft mr-2 mt-2 d-md-none d-lg-none" size="sm"><span class="header-button-span">GET NFT </span></b-button>
+  <b-button @click="exportToCsv" class="header-button-csv mr-2 mt-2 d-md-none d-lg-none" size="sm"><span class="header-button-span"> Export as CSV</span></b-button>
   
     </div>
     <v-touch class="content" @swipe="handleSwipe" :swipe-options="{direction: 'horizontal'}">
