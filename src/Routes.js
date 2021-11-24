@@ -5,29 +5,58 @@ import Layout from '@/components/Layout/Layout';
 import Login from '@/pages/Login/Login';
 import ErrorPage from '@/pages/Error/Error';
 // Core
-import TypographyPage from '@/pages/Typography/Typography';
+// import TypographyPage from '@/pages/Typography/Typography';
 
 // Tables
-import TablesBasicPage from '@/pages/Tables/Basic';
+// import TablesBasicPage from '@/pages/Tables/Basic';
 
 // Maps
-import GoogleMapPage from '@/pages/Maps/Google';
+// import GoogleMapPage from '@/pages/Maps/Google';
 
 // Main
 import AnalyticsPage from '@/pages/Dashboard/Dashboard';
 
+// NFT
+import NftPage from '@/pages/NFT/Nft';
+// User
+import UserPage from '@/pages/User/User';
+// Products
+import ProductPage from '@/pages/Products/Product';
+// Avatar
+import AvatarPage from '@/pages/Games/Avatar';
+
 // Charts
-import ChartsPage from '@/pages/Charts/Charts';
+// import ChartsPage from '@/pages/Charts/Charts';
 
 // Ui
-import IconsPage from '@/pages/Icons/Icons';
+// import IconsPage from '@/pages/Icons/Icons';
 import NotificationsPage from '@/pages/Notifications/Notifications';
 
 
 Vue.use(Router);
 
+const isAuth = (to, from, next)=> {
+  if(window.ethereum.selectedAddress != ''){
+    if(window.localStorage.getItem("authenticated") === 'true'){
+      next()
+    }
+    else{
+      next('/login')
+    }
+  }
+};
+
+
+
+
 export default new Router({
+// history : createWebHistory(process.env.BASE_URL),
   routes: [
+    {
+      path: '/',
+      redirect: '/login',
+      
+    },
     {
       path: '/login',
       name: 'Login',
@@ -47,37 +76,43 @@ export default new Router({
           path: 'dashboard',
           name: 'AnalyticsPage',
           component: AnalyticsPage,
+          beforeEnter: isAuth
         },
         {
-          path: 'typography',
-          name: 'TypographyPage',
-          component: TypographyPage,
+          path: 'nfts',
+          name: 'NftPage ',
+          component: NftPage ,
+          beforeEnter: isAuth,
+      
         },
         {
-          path: 'components/icons',
-          name: 'IconsPage',
-          component: IconsPage,
+          path: 'users',
+          name: 'User',
+          component: UserPage,
+          beforeEnter: isAuth,
+      
+        },
+        {
+          path: 'products',
+          name: 'Product',
+          component: ProductPage,
+          beforeEnter: isAuth,
+      
+        },
+        {
+          path: 'avatars',
+          name: 'Avatar',
+          component: AvatarPage,
+          beforeEnter: isAuth,
+      
         },
         {
           path: 'notifications',
           name: 'NotificationsPage',
           component: NotificationsPage,
-        },
-        {
-          path: 'components/charts',
-          name: 'ChartsPage',
-          component: ChartsPage,
-        },
-        {
-          path: 'tables',
-          name: 'TablesBasicPage',
-          component: TablesBasicPage,
-        },
-        {
-          path: 'components/maps',
-          name: 'GoogleMapPage',
-          component: GoogleMapPage,
-        },
+          beforeEnter: isAuth
+          
+        }
       ],
     },
   ],

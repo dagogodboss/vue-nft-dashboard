@@ -2,6 +2,8 @@ import Web3Modal from "web3modal";
 import Web3 from "web3";
 // import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import Authereum from "authereum";
+import router from "../Routes"
+import { abi } from "../abi/erc721"
 
 const state = {
     activeAccount: null,
@@ -11,7 +13,16 @@ const state = {
     web3: null,
     isConnected: false,
     providerW3m: null, // this is "provider" from Web3Modal
-    web3Modal: null
+    web3Modal: null,
+    nfts: [],
+    pagination: {
+        itemPerPage: 0,
+        totalItem: 0,
+    },
+    maxTokens: 0,
+    itemSetByUser: null,
+    smartContract: null
+
 };
 
 const getters = {
@@ -19,14 +30,13 @@ const getters = {
         if (!state.activeAccount) {
             return window.ethereum.selectedAddress;
         }
-
         return state.activeAccount;
     },
     getActiveBalanceWei(state) {
-        return state.activeBalance;
+        return `${state.activeBalance}`;
     },
     getActiveBalanceEth(state) {
-        return state.web3.utils.fromWei(state.activeBalance, "ether");
+        return `${state.web3.utils.fromWei(state.activeBalance, "ether")}`;
     },
     getChainId(state) {
         return state.chainId;
@@ -42,10 +52,16 @@ const getters = {
         }
     },
     getWeb3Modal(state) {
-        return state.web3Modal;
+        // return state.web3Modal;
+        if (state.web3Modal) {
+            return state.web3Modal;
+        } else {
+            return new Web3(Web3.givenProvider);
+        }
     },
     isUserConnected(state) {
         return state.isConnected;
+
     }
 };
 
@@ -73,46 +89,57 @@ const actions = {
 
         // if the user is flagged as already connected, automatically connect back to Web3Modal
         if (localStorage.getItem('isConnected') === "true") {
-            let providerW3m = await w3mObject.connect();
+            let providerW3m = await w3mObject.connect(); // alternative to this Object is the window.ethereum
             commit("setIsConnected", true);
-
             commit("setActiveAccount", window.ethereum.selectedAddress);
             commit("setChainData", window.ethereum.chainId);
             commit("setWeb3Provider", providerW3m);
             actions.fetchActiveBalance({ commit });
         }
-
         commit("setWeb3ModalInstance", w3mObject);
     },
 
     async connectWeb3Modal({ commit }) {
+        window.localStorage.setItem('authenticated', 'true');
         let providerW3m = await state.web3Modal.connect();
         commit("setIsConnected", true);
-
         commit("setActiveAccount", window.ethereum.selectedAddress);
         commit("setChainData", window.ethereum.chainId);
         commit("setWeb3Provider", providerW3m);
         actions.fetchActiveBalance({ commit });
-        window.localStorage.setItem('authenticated', true);
-        // window.location.href = '/app/dashboard';
-        // this.$router.push('/app/dashboard');
+        router.push('/app/dashboard');
+
     },
 
     async disconnectWeb3Modal({ commit }) {
-        commit("disconnectWallet");
+        window.localStorage.setItem('authenticated', 'false');
+        let modalCache = state.web3Modal.clearCachedProvider();
         commit("setIsConnected", false);
-        window.localStorage.setItem('authenticated', false);
+        commit("disconnectWallet");
+        commit("clearModalCache", modalCache);
+        if (router.currentRoute.name == "Login") {
+
+            return null;
+        }
+        else {
+            router.push('/login');
+
+        }
+
 
     },
 
     async ethereumListener({ commit }) {
 
         window.ethereum.on('accountsChanged', (accounts) => {
-            if (state.isConnected) {
+            if (localStorage.getItem('isConnected') == 'true') {
+                actions.disconnectWeb3Modal({ commit });
                 commit("setActiveAccount", accounts[0]);
                 commit("setWeb3Provider", state.providerW3m);
                 actions.fetchActiveBalance({ commit });
+
             }
+
         });
 
         window.ethereum.on('chainChanged', (chainId) => {
@@ -122,29 +149,101 @@ const actions = {
         });
 
     },
+    async removeEthereumListener({ commit }) {
+
+        window.ethereum.removeListener('accountsChanged', (accounts) => {
+            if (localStorage.getItem('isConnected')) {
+                commit("setActiveAccount", accounts[0]);
+                commit("setWeb3Provider", state.providerW3m);
+                actions.fetchActiveBalance({ commit });
+
+            }
+        });
+
+        window.ethereum.removeListener('chainChanged', (chainId) => {
+            commit("setChainData", chainId);
+            commit("setWeb3Provider", state.providerW3m);
+            actions.fetchActiveBalance({ commit });
+        });
+
+    },
 
     async fetchActiveBalance({ commit }) {
+        console.log("HS")
         let balance = await state.web3.eth.getBalance(state.activeAccount);
         commit("setActiveBalance", balance);
+    },
+    fetchUserRefs({ commit }, payload) {
+        commit("setSmartContract", payload.smartContractRef);
+        commit("setItemsToDisplay", payload.userItemsRef)
     }
+    ,
+    async fetchNfts({ commit }) {
+        commit("setNftLoading");
+        let contract;
+        if (state.web3 == null) {
+            let providerW3m = window.ethereum;
+            commit("setWeb3Provider", providerW3m);
+            contract = new state.web3.eth.Contract(abi, state.smartContract);
+        }
+        contract = await new state.web3.eth.Contract(abi, state.smartContract);
+        // const contract = await new state.web3.eth.Contract(abi).at(state.smartContract)
+        if (state.itemSetByUser !== null) {
+            commit("setItemPerPage", state.itemSetByUser)
+        }
+        else {
+            return state.pagination.itemPerPage
+        }
+        let countNFt = await contract.methods.totalSupply().call();
+        if (countNFt > 0) {
+            commit("setMaxTokens", state.pagination.itemPerPage)
+        }
+        else {
+            commit("setMaxTokens", countNFt)
+        }
+        let nftDetails = [];
 
+        let name, address, nft_id, nameHTML;
+        commit("setTotalItems", countNFt)
+        for (let i = 1; i <= state.maxTokens; i++) {
+            nft_id = await contract.methods.tokenByIndex(i).call();
+            address = contract.methods.ownerOf(nft_id.toString()).call();
+            name = contract.methods.tokenURI(nft_id.toString()).call();
+            nameHTML = `<a href=${name}> ${name} </a>`;
+            const updatedList = await Promise.all([nameHTML, address, nft_id]);
+            nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
+        }
+        commit("setNfts", nftDetails);
+
+
+    },
+
+    clearNfts({ commit }) {
+        commit("resetNftTable")
+    }
 };
 
 const mutations = {
 
-    async disconnectWallet(state) {
+    disconnectWallet(state) {
         state.activeAccount = null;
         state.activeBalance = 0;
-        state.web3 = null;
-        if (state.providerW3m.close && state.providerW3m !== null) {
-            await state.providerW3m.close();
-        }
-        state.providerW3m = null;
-        await state.web3Modal.clearCachedProvider();
-
-        window.location.href = '../'; // redirect to the Main page
+        state.chainId = null,
+            state.chainName = null,
+            state.web3 = null,
+            state.nfts = [],
+            state.pagination = {
+                itemPerPage: 0,
+                totalItem: 0,
+            },
+            state.maxTokens = 0,
+            state.itemSetByUser = null,
+            state.smartContract = null
     },
-
+    clearModalCache(state, modalCache) {
+        state.web3Modal = modalCache;
+        state.providerW3m = null;
+    },
     setActiveAccount(state, selectedAddress) {
         state.activeAccount = selectedAddress;
     },
@@ -180,7 +279,7 @@ const mutations = {
         }
     },
 
-    async setWeb3Provider(state, providerW3m) {
+    setWeb3Provider(state, providerW3m) {
         state.providerW3m = providerW3m;
         state.web3 = new Web3(providerW3m);
     },
@@ -188,13 +287,44 @@ const mutations = {
     setIsConnected(state, isConnected) {
         state.isConnected = isConnected;
         // add to persistent storage so that the user can be logged back in when revisiting website
-        localStorage.setItem('isConnected', isConnected);
+        localStorage.setItem('isConnected', `${isConnected}`);
     },
 
     setWeb3ModalInstance(state, w3mObject) {
         state.web3Modal = w3mObject;
-    }
+    },
+    setNfts(state, nfts) {
+        state.nfts = nfts;
+    },
+    setItemPerPage(state, itemSetByUser) {
+        state.pagination.itemPerPage = itemSetByUser;
+    },
+    setMaxTokens(state, NFtCount) {
+        state.maxTokens = NFtCount;
+    },
+    setTotalItems(state, count) {
+        state.pagination.totalItem = count
+    },
+    setItemsToDisplay(state, payload) {
+        state.itemSetByUser = payload
+    },
+    setSmartContract(state, payload) {
+        state.smartContract = payload
+    },
+    setNftLoading(state) {
+        let isLoading = [{
+            nft_id: 'LOADING...',
+            address: 'LOADING...',
+            name: 'LOADING...'
 
+        }];
+        state.nfts = isLoading;
+    },
+    resetNftTable(state) {
+        state.nfts = [];
+        state.itemSetByUser = null,
+            state.smartContract = null
+    }
 };
 
 export default {
