@@ -172,7 +172,6 @@ const actions = {
     },
 
     async fetchActiveBalance({ commit }) {
-        console.log("HS")
         let balance = await state.web3.eth.getBalance(state.activeAccount);
         commit("setActiveBalance", balance);
     },
@@ -205,16 +204,14 @@ const actions = {
             commit("setMaxTokens", countNFt)
         }
         let nftDetails = [];
-
-        let name, address, nft_id, nameHTML;
+        let name, address, nft_id;
         commit("setTotalItems", countNFt)
         for (let i = 1; i <= state.maxTokens; i++) {
             nft_id = await contract.methods.tokenByIndex(i).call();
             address = contract.methods.ownerOf(nft_id.toString()).call();
             name = contract.methods.tokenURI(nft_id.toString()).call();
-            nameHTML = `<a href=${name}> ${name} </a>`;
-            const updatedList = await Promise.all([nameHTML, address, nft_id]);
-            nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
+            const updatedList = await Promise.all([name, address, nft_id]);
+            nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: `<a href=${updatedList[0]}> ${updatedList[0]} </a>` });
         }
         commit("setNfts", nftDetails);
 
