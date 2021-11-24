@@ -5,25 +5,31 @@ import Layout from '@/components/Layout/Layout';
 import Login from '@/pages/Login/Login';
 import ErrorPage from '@/pages/Error/Error';
 // Core
-import TypographyPage from '@/pages/Typography/Typography';
+// import TypographyPage from '@/pages/Typography/Typography';
 
 // Tables
-import TablesBasicPage from '@/pages/Tables/Basic';
+// import TablesBasicPage from '@/pages/Tables/Basic';
 
 // Maps
-import GoogleMapPage from '@/pages/Maps/Google';
+// import GoogleMapPage from '@/pages/Maps/Google';
 
 // Main
 import AnalyticsPage from '@/pages/Dashboard/Dashboard';
 
-// Main
+// NFT
 import NftPage from '@/pages/NFT/Nft';
+// User
+import UserPage from '@/pages/User/User';
+// Products
+import ProductPage from '@/pages/Products/Product';
+// Avatar
+import AvatarPage from '@/pages/Games/Avatar';
 
 // Charts
-import ChartsPage from '@/pages/Charts/Charts';
+// import ChartsPage from '@/pages/Charts/Charts';
 
 // Ui
-import IconsPage from '@/pages/Icons/Icons';
+// import IconsPage from '@/pages/Icons/Icons';
 import NotificationsPage from '@/pages/Notifications/Notifications';
 
 
@@ -80,18 +86,25 @@ export default new Router({
       
         },
         {
-          path: 'typography',
-          name: 'TypographyPage',
-          component: TypographyPage,
-          beforeEnter: isAuth
-          
+          path: 'users',
+          name: 'User',
+          component: UserPage,
+          beforeEnter: isAuth,
+      
         },
         {
-          path: 'components/icons',
-          name: 'IconsPage',
-          component: IconsPage,
-          beforeEnter: isAuth
-          
+          path: 'products',
+          name: 'Product',
+          component: ProductPage,
+          beforeEnter: isAuth,
+      
+        },
+        {
+          path: 'avatars',
+          name: 'Avatar',
+          component: AvatarPage,
+          beforeEnter: isAuth,
+      
         },
         {
           path: 'notifications',
@@ -99,28 +112,7 @@ export default new Router({
           component: NotificationsPage,
           beforeEnter: isAuth
           
-        },
-        {
-          path: 'components/charts',
-          name: 'ChartsPage',
-          component: ChartsPage,
-          beforeEnter: isAuth
-          
-        },
-        {
-          path: 'tables',
-          name: 'TablesBasicPage',
-          component: TablesBasicPage,
-          beforeEnter: isAuth
-          
-        },
-        {
-          path: 'components/maps',
-          name: 'GoogleMapPage',
-          component: GoogleMapPage,
-          beforeEnter: isAuth
-          
-        },
+        }
       ],
     },
   ],

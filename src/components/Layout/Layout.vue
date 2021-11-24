@@ -61,7 +61,7 @@
         <router-view />
       </transition>
       <footer class="contentFooter">
-        RTFKT CRM  Vue Dashboard Free Template - Made by <a href="https://flatlogic.com" rel="nofollow noopener noreferrer" target="_blank">Flatlogic</a>
+        RTFKT CRM  Vue Dashboard <a href="" rel="nofollow noopener noreferrer" target="_blank">RTFKT Studio</a>
       </footer>
     </v-touch>
   </div>
