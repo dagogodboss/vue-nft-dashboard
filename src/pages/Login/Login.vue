@@ -29,7 +29,9 @@
 
 <script>
 import Widget from '@/components/Widget/Widget';
-import { mapGetters, mapActions } from "vuex";
+import { createNamespacedHelpers } from 'vuex';
+const { mapGetters, mapActions } = createNamespacedHelpers('accounts');
+
 export default {
   name: 'LoginPage',
   components: { Widget },
@@ -38,20 +40,13 @@ export default {
       errorMessage: null
     };
   },
-  mounted: function(){
-    },
-  updated: function(isUserConnected){
-    if(isUserConnected){
-      this.$router.push('/app/dashboard');
-    }
-
-  },
+ 
   methods: {
-    ...mapActions("accounts", ["connectWeb3Modal", "disconnectWeb3Modal"]),
+    ...mapActions( ["connectWeb3Modal"]),   
   },
   computed: {
-    ...mapGetters("accounts", ["getChainName", "isUserConnected", "getWeb3Modal"]),
-  
+    ...mapGetters(["getChainName", "isUserConnected", "getWeb3Modal"]),
+    
     showChainAlert() {
       switch (this.getChainName) {
         case "Mainnet":
@@ -60,13 +55,27 @@ export default {
           return true;
       }
     }
+   
+  
+  }, 
+
+ mounted() {
+    // callGetters(){
+    //   return this.$store.getters
+    // }
+    return this.$store.dispatch("accounts/initWeb3Modal") , this.$store.dispatch("accounts/ethereumListener");
+    
+     
+  
   },
-  created() {
-    this.$store.dispatch("accounts/initWeb3Modal");
-    this.$store.dispatch("accounts/ethereumListener");
-    if (window.localStorage.getItem('authenticated') === 'true') {
-      this.$router.push('/app/dashboard');
-    }
-  },
-};
+
+  beforeRouteEnter(to, from, next) {
+     if(window.localStorage.getItem("authenticated") === 'true'){
+       next('/app/dashboard')
+     }
+     else{
+       next()
+     }
+   } 
+}; 
 </script>

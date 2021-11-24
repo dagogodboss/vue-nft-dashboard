@@ -80,7 +80,50 @@
       margin-right: $content-padding-sm;
     }
   }
-
+  .header-button{
+    display: flex;
+    margin-left: auto;
+    padding-right: 1rem;
+    background-color: #002B49;
+    color: #fff;
+    &:hover{
+      background-color: #5CB0FF;
+      color: #002B49;
+    }
+    &-nft{
+      height: 40px;
+      display: flex;
+      align-self: center;
+      margin-right: 1rem;
+      background-color: #fff; 
+      color: #002B49;
+      align-items: center;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      white-space: nowrap;
+    }
+    &-csv{
+      height: 40px;
+      display: flex;
+      align-self: center;
+      margin-right: 1rem;
+      background-color:#002B49;
+      color:  #fff; 
+      align-items: center;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      white-space: nowrap;
+    }
+    &-button-span{
+      display: flex;
+      align-self: center;
+      
+    }
+  }
+  .flex-container{
+    display: flex;
+    justify-content: flex-start;
+  }
   .form-group {
     width: 300px;
     input {

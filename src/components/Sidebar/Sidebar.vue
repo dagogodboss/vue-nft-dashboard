@@ -39,7 +39,7 @@
         />
         <NavLink
             :activeItem="activeItem"
-            header="NFTs"
+            header="NFT's"
             link="/app/nfts"
             iconName="glyphicon glyphicon-euro"
             index="nfts"
@@ -58,13 +58,13 @@
         STATUS
       </h5>
       <ul class="sidebarLabels">
-        <li v-if="isUserConnected">
+        <li v-if="setWalletConnected">
           <i class="fa fa-circle text-success" style="margin-right: 19px !important; display: inline;"/>
-          <span class="labelName">Wallet Conntected</span>
+          <span class="labelName">Wallet Connected</span>
         </li>
-        <li v-if="!isUserConnected">
+        <li v-if="!setWalletConnected">
           <i class="fa fa-circle text-danger" style="margin-right: 19px !important; display: inline;"/>
-          <span class="labelName">Wallet Disconntected</span>
+          <span class="labelName">Wallet Disconnected</span>
         </li>
 
       </ul>
@@ -104,7 +104,14 @@ export default {
         this.switchSidebar(true);
         this.changeSidebarActive(null);
       }
-    },
+    }
+  
+  },
+  mounted() {
+          return  this.$store.dispatch("accounts/ethereumListener");
+  }, 
+  unmounted(){
+    return this.$store.dispatch("accounts/removeEthereumListener");
   },
   created() {
     this.setActiveByRoute();
@@ -115,8 +122,15 @@ export default {
       sidebarOpened: state => !state.sidebarClose,
       activeItem: state => state.sidebarActiveElement,
     }),
-    ...mapGetters("accounts", ["getChainName", "isUserConnected", "getWeb3Modal"]),
-
+    ...mapGetters("accounts", ["getChainName", "getWeb3Modal", "getActiveAccount"]),
+  setWalletConnected(){
+    if(localStorage.getItem('isConnected') == 'true'){
+      return true
+    }
+    else{
+      return false
+    }
+  },
   },
 };
 </script>
