@@ -196,16 +196,16 @@ return null;
        }
         let nftDetails = [];
           
-        let name, address, nft_id, addressHTML;
+        let name, address, nft_id, nameHTML;
         commit("setTotalItems",countNFt )
         for (let i = 1; i <= state.maxTokens; i++) {
-            address =  await contract.methods.ownerOf(i).call();
-            name =  contract.methods.tokenURI(i).call();
+            address =  contract.methods.ownerOf(i).call();
+            name =  await contract.methods.tokenURI(i).call();
             nft_id = i;
-            addressHTML = `<a href=${address}>${address}} </a>`
+            nameHTML = `<a href=${name}> ${name} </a>`;
      
             
-          const updatedList = await Promise.all([name, addressHTML, nft_id]);
+          const updatedList = await Promise.all([nameHTML, address, nft_id]);
         nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
         }
         commit("setNfts", nftDetails);
@@ -308,9 +308,10 @@ setSmartContract(state, payload){
 },
 setNftLoading(state){
     let isLoading =  [{
-        name: 'LOADING...',
+        nft_id: 'LOADING...',
         address: 'LOADING...',
-        nft_id: 'LOADING...'
+        name: 'LOADING...'
+       
     }];
     state.nfts = isLoading;
 },
