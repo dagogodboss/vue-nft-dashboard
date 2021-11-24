@@ -4,7 +4,10 @@
     <b-row>
       <b-col>   
 <div>
-    <b-table striped hover :items="nfts"></b-table>
+    <b-table striped hover :items="nfts">
+      <template #cell(address)="data">
+        <span v-html="data.value"></span></template>
+    </b-table>
   </div>
       </b-col>
  

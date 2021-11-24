@@ -196,16 +196,19 @@ return null;
        }
         let nftDetails = [];
           
-        let name, address, nft_id;
+        let name, address, nft_id, addressHTML;
         commit("setTotalItems",countNFt )
         for (let i = 1; i <= state.maxTokens; i++) {
-            address = contract.methods.ownerOf(i).call();
-            name = contract.methods.tokenURI(i).call();
+            address =  await contract.methods.ownerOf(i).call();
+            name =  contract.methods.tokenURI(i).call();
             nft_id = i;
-            const updatedList = await Promise.all([name, address, nft_id]);
-            nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
+            addressHTML = `<a href=${address}>${address}} </a>`
+     
+            
+          const updatedList = await Promise.all([name, addressHTML, nft_id]);
+        nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
         }
-        commit("setNfts", nftDetails)
+        commit("setNfts", nftDetails);
   
 
     },
