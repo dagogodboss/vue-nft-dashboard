@@ -178,6 +178,9 @@ return null;
 
    
   },
+  mounted(){
+     return this.$store.dispatch("accounts/initWeb3Modal");
+  },
   created() {
     const staticSidebar = JSON.parse(localStorage.getItem('sidebarStatic'));
 
@@ -188,10 +191,12 @@ return null;
         this.switchSidebar(true);
         this.changeSidebarActive(null);
       }, 2500);
+         
     }
 
     this.handleWindowResize();
     window.addEventListener('resize', this.handleWindowResize);
+   
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.handleWindowResize);

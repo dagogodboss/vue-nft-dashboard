@@ -4,7 +4,10 @@
     <b-row>
       <b-col>   
 <div>
-    <b-table striped hover :items="nfts"></b-table>
+    <b-table striped hover :items="nfts">
+      <template #cell(name)="data">
+        <span v-html="data.value"></span></template>
+    </b-table>
   </div>
       </b-col>
  
@@ -35,7 +38,8 @@ export default {
   computed: {
   ...mapState('accounts',['nfts']),
   },
-  unmounted(){
+
+  beforeDestroy(){
  return this.$store.dispatch("accounts/clearNfts")
   },
   }

@@ -2,8 +2,8 @@ import Web3Modal from "web3modal";
 import Web3 from "web3";
 // import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import Authereum from "authereum";
-import router  from "../Routes"
-import {abi} from "../abi/erc721"
+import router from "../Routes"
+import { abi } from "../abi/erc721"
 
 const state = {
     activeAccount: null,
@@ -19,16 +19,16 @@ const state = {
         itemPerPage: 0,
         totalItem: 0,
     },
-    maxTokens:0,
-    itemSetByUser : null,
+    maxTokens: 0,
+    itemSetByUser: null,
     smartContract: null
-    
+
 };
 
 const getters = {
     getActiveAccount(state) {
         if (!state.activeAccount) {
-         return window.ethereum.selectedAddress;
+            return window.ethereum.selectedAddress;
         }
         return state.activeAccount;
     },
@@ -61,7 +61,7 @@ const getters = {
     },
     isUserConnected(state) {
         return state.isConnected;
-        
+
     }
 };
 
@@ -108,24 +108,24 @@ const actions = {
         commit("setWeb3Provider", providerW3m);
         actions.fetchActiveBalance({ commit });
         router.push('/app/dashboard');
-       
+
     },
 
-    async  disconnectWeb3Modal({ commit }) {
-    window.localStorage.setItem('authenticated', 'false');
-  let modalCache = state.web3Modal.clearCachedProvider();
-    commit("setIsConnected", false);
-   commit("disconnectWallet");
-   commit("clearModalCache", modalCache);
-   if(router.currentRoute.name == "Login"){
-  
-return null;
-   }
-   else{
-    router.push('/login');
-   
-   }
- 
+    async disconnectWeb3Modal({ commit }) {
+        window.localStorage.setItem('authenticated', 'false');
+        let modalCache = state.web3Modal.clearCachedProvider();
+        commit("setIsConnected", false);
+        commit("disconnectWallet");
+        commit("clearModalCache", modalCache);
+        if (router.currentRoute.name == "Login") {
+
+            return null;
+        }
+        else {
+            router.push('/login');
+
+        }
+
 
     },
 
@@ -133,13 +133,13 @@ return null;
 
         window.ethereum.on('accountsChanged', (accounts) => {
             if (localStorage.getItem('isConnected') == 'true') {
-                actions.disconnectWeb3Modal({commit});
+                actions.disconnectWeb3Modal({ commit });
                 commit("setActiveAccount", accounts[0]);
                 commit("setWeb3Provider", state.providerW3m);
                 actions.fetchActiveBalance({ commit });
-              
+
             }
-           
+
         });
 
         window.ethereum.on('chainChanged', (chainId) => {
@@ -156,7 +156,7 @@ return null;
                 commit("setActiveAccount", accounts[0]);
                 commit("setWeb3Provider", state.providerW3m);
                 actions.fetchActiveBalance({ commit });
-               
+
             }
         });
 
@@ -165,7 +165,7 @@ return null;
             commit("setWeb3Provider", state.providerW3m);
             actions.fetchActiveBalance({ commit });
         });
-    
+
     },
 
     async fetchActiveBalance({ commit }) {
@@ -173,74 +173,74 @@ return null;
         let balance = await state.web3.eth.getBalance(state.activeAccount);
         commit("setActiveBalance", balance);
     },
-    fetchUserRefs({commit}, payload){
+    fetchUserRefs({ commit }, payload) {
         commit("setSmartContract", payload.smartContractRef);
         commit("setItemsToDisplay", payload.userItemsRef)
     }
     ,
-   async fetchNfts({commit}){
-       commit("setNftLoading");
+    async fetchNfts({ commit }) {
+        commit("setNftLoading");
         let contract;
-        if(state.web3 == null){
+        if (state.web3 == null) {
             let providerW3m = window.ethereum;
             commit("setWeb3Provider", providerW3m);
-            contract =  new state.web3.eth.Contract(abi, state.smartContract);
+            contract = new state.web3.eth.Contract(abi, state.smartContract);
         }
         contract = await new state.web3.eth.Contract(abi, state.smartContract);
         // const contract = await new state.web3.eth.Contract(abi).at(state.smartContract)
-        if(state.itemSetByUser !== null){
-            commit("setItemPerPage",state.itemSetByUser)  
+        if (state.itemSetByUser !== null) {
+            commit("setItemPerPage", state.itemSetByUser)
         }
-        else{
-           return state.pagination.itemPerPage
+        else {
+            return state.pagination.itemPerPage
         }
         let countNFt = await contract.methods.totalSupply().call();
-        console.log(countNFt);
-       if(countNFt > 0){
-        commit("setMaxTokens", state.pagination.itemPerPage )
-       }
-       else{
-        commit("setMaxTokens", countNFt)
-       }
+        if (countNFt > 0) {
+            commit("setMaxTokens", state.pagination.itemPerPage)
+        }
+        else {
+            commit("setMaxTokens", countNFt)
+        }
         let nftDetails = [];
-          
-        let name, address, nft_id;
-        commit("setTotalItems", countNFt )
+
+        let name, address, nft_id, nameHTML;
+        commit("setTotalItems", countNFt)
         for (let i = 1; i <= state.maxTokens; i++) {
             nft_id = await contract.methods.tokenByIndex(i).call();
             address = contract.methods.ownerOf(nft_id.toString()).call();
             name = contract.methods.tokenURI(nft_id.toString()).call();
-            const updatedList = await Promise.all([name, address, nft_id]);
+            nameHTML = `<a href=${name}> ${name} </a>`;
+            const updatedList = await Promise.all([nameHTML, address, nft_id]);
             nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: updatedList[0] });
         }
-        commit("setNfts", nftDetails)
-  
+        commit("setNfts", nftDetails);
+
 
     },
-    
-    clearNfts({commit}){
+
+    clearNfts({ commit }) {
         commit("resetNftTable")
     }
 };
 
 const mutations = {
 
-     disconnectWallet(state) {
+    disconnectWallet(state) {
         state.activeAccount = null;
         state.activeBalance = 0;
-    state.chainId =null,
-    state.chainName = null,
-    state.web3 = null,
-    state.nfts = [],
-    state.pagination = {
-        itemPerPage: 0,
-        totalItem: 0,
+        state.chainId = null,
+            state.chainName = null,
+            state.web3 = null,
+            state.nfts = [],
+            state.pagination = {
+                itemPerPage: 0,
+                totalItem: 0,
+            },
+            state.maxTokens = 0,
+            state.itemSetByUser = null,
+            state.smartContract = null
     },
-    state.maxTokens =0,
-    state.itemSetByUser = null,
-    state.smartContract= null
-    },
-    clearModalCache(state, modalCache){
+    clearModalCache(state, modalCache) {
         state.web3Modal = modalCache;
         state.providerW3m = null;
     },
@@ -293,37 +293,38 @@ const mutations = {
     setWeb3ModalInstance(state, w3mObject) {
         state.web3Modal = w3mObject;
     },
-    setNfts(state, nfts){
-state.nfts = nfts;
-    },  
-   setItemPerPage(state,itemSetByUser){
-    state.pagination.itemPerPage = itemSetByUser;
-   },
-   setMaxTokens(state, NFtCount){
-state.maxTokens = NFtCount;
-   },
-   setTotalItems(state, count){
-       state.pagination.totalItem = count
-   },
-   setItemsToDisplay(state, payload){
-    state.itemSetByUser= payload
-},
-setSmartContract(state, payload){
-    state.smartContract = payload
-},
-setNftLoading(state){
-    let isLoading =  [{
-        name: 'LOADING...',
-        address: 'LOADING...',
-        nft_id: 'LOADING...'
-    }];
-    state.nfts = isLoading;
-},
-resetNftTable(state){
-    state.nfts = [];
-    state.itemSetByUser = null,
-    state.smartContract = null
-}
+    setNfts(state, nfts) {
+        state.nfts = nfts;
+    },
+    setItemPerPage(state, itemSetByUser) {
+        state.pagination.itemPerPage = itemSetByUser;
+    },
+    setMaxTokens(state, NFtCount) {
+        state.maxTokens = NFtCount;
+    },
+    setTotalItems(state, count) {
+        state.pagination.totalItem = count
+    },
+    setItemsToDisplay(state, payload) {
+        state.itemSetByUser = payload
+    },
+    setSmartContract(state, payload) {
+        state.smartContract = payload
+    },
+    setNftLoading(state) {
+        let isLoading = [{
+            nft_id: 'LOADING...',
+            address: 'LOADING...',
+            name: 'LOADING...'
+
+        }];
+        state.nfts = isLoading;
+    },
+    resetNftTable(state) {
+        state.nfts = [];
+        state.itemSetByUser = null,
+            state.smartContract = null
+    }
 };
 
 export default {
