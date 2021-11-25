@@ -3,7 +3,7 @@ import Web3 from "web3";
 // import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import Authereum from "authereum";
 import router from "../Routes"
-import { abi } from "../abi/erc721"
+import { abi, erc1155Abi, punkAbi } from "../abi/erc721"
 
 const state = {
     activeAccount: null,
@@ -182,40 +182,68 @@ const actions = {
     ,
     async fetchNfts({ commit }) {
         commit("setNftLoading");
-        let contract;
+        let contract, contract1155, contractPunk;
         if (state.web3 == null) {
             let providerW3m = window.ethereum;
             commit("setWeb3Provider", providerW3m);
             contract = new state.web3.eth.Contract(abi, state.smartContract);
+            contract1155 = new state.web3.eth.Contract(erc1155Abi, state.smartContract);
+            contractPunk = new state.web3.eth.Contract(punkAbi, state.smartContract);
         }
         contract = await new state.web3.eth.Contract(abi, state.smartContract);
-        // const contract = await new state.web3.eth.Contract(abi).at(state.smartContract)
+        contract1155 = new state.web3.eth.Contract(erc1155Abi, state.smartContract);
+        contractPunk = new state.web3.eth.Contract(punkAbi, state.smartContract);
+
         if (state.itemSetByUser !== null) {
             commit("setItemPerPage", state.itemSetByUser)
         }
         else {
             return state.pagination.itemPerPage
         }
-        let countNFt = await contract.methods.totalSupply().call();
-        if (countNFt > 0) {
-            commit("setMaxTokens", state.pagination.itemPerPage)
+        try {
+            let countNFt = await contract.methods.totalSupply().call();
+            if (countNFt > 0) {
+                commit("setMaxTokens", state.pagination.itemPerPage)
+            }
+            else {
+                commit("setMaxTokens", countNFt)
+            }
+            let nftDetails = [];
+            let name, address, nft_id;
+            commit("setTotalItems", countNFt)
+            for (let i = 1; i <= state.maxTokens; i++) {
+                nft_id = await contract.methods.tokenByIndex(i).call();
+                address = contract.methods.ownerOf(nft_id.toString()).call();
+                name = contract.methods.tokenURI(nft_id.toString()).call();
+                const updatedList = await Promise.all([name, address, nft_id]);
+                nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: `<a href=${updatedList[0]}> ${updatedList[0]} </a>` });
+            }
+            commit("setNfts", nftDetails);
+        } catch (error) {
+            let nftDetails = [];
+            let name, address, nft_id;
+            commit("setTotalItems", state.pagination.itemPerPage)
+            for (let i = 1; i <= state.pagination.itemPerPage; i++) {
+                nft_id = i;
+                address = contract1155.methods.creators(nft_id).call();
+                name = contract1155.methods.uri(nft_id).call();
+                const updatedList = await Promise.all([name, address, nft_id]);
+                nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: `<a href=${updatedList[0]}> ${updatedList[0]} </a>` });
+            }
+            commit("setNfts", nftDetails);
+        } finally {
+            let nftDetails = [];
+            let name, address, nft_id;
+            commit("setTotalItems", state.pagination.itemPerPage)
+            for (let i = 1; i <= state.pagination.itemPerPage; i++) {
+                nft_id = i;
+                address = contractPunk.methods.ownerOf(nft_id).call();
+                name = contractPunk.methods.tokenURI(nft_id).call();
+                const updatedList = await Promise.all([name, address, nft_id]);
+                nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: `<a href=${updatedList[0]}> ${updatedList[0]} </a>` });
+            }
+            commit("setNfts", nftDetails);
         }
-        else {
-            commit("setMaxTokens", countNFt)
-        }
-        let nftDetails = [];
-        let name, address, nft_id;
-        commit("setTotalItems", countNFt)
-        for (let i = 1; i <= state.maxTokens; i++) {
-            nft_id = await contract.methods.tokenByIndex(i).call();
-            address = contract.methods.ownerOf(nft_id.toString()).call();
-            name = contract.methods.tokenURI(nft_id.toString()).call();
-            const updatedList = await Promise.all([name, address, nft_id]);
-            nftDetails.push({ nft_id: updatedList[2], address: updatedList[1], name: `<a href=${updatedList[0]}> ${updatedList[0]} </a>` });
-        }
-        commit("setNfts", nftDetails);
-
-
     },
 
     clearNfts({ commit }) {
@@ -313,9 +341,9 @@ const mutations = {
     },
     setNftLoading(state) {
         let isLoading = [{
-            nft_id: 'LOADING...',
-            address: 'LOADING...',
-            name: 'LOADING...'
+            nft_id: 'LOADING  NFT...',
+            address: 'LOADING  NFT...',
+            name: 'LOADING  NFT...'
 
         }];
         state.nfts = isLoading;
